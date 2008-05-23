@@ -1,0 +1,6 @@
+Makefile.PL
+MANIFEST
+INSTALL
+Changes
+bin/conpalette
+t/00-cheat.t

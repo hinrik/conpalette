@@ -1,0 +1,227 @@
+#!/usr/bin/env perl
+
+package App::ConPalette;
+
+use strict;
+use warnings;
+use Getopt::Long qw(:config auto_help);
+use Pod::Usage;
+
+our $VERSION = '0.1.3';
+
+my %palettes = (
+    'konsole' => [
+        '000000',
+        'B21818',
+        '18B218',
+        'B26818',
+        '1818B2',
+        'B218B2',
+        '18B2B2',
+        'B2B2B2',
+
+        '686868',
+        'FF5454',
+        '54FF54',
+        'FFFF54',
+        '5454FF',
+        'FF54FF',
+        '54FFFF',
+        'FFFFFF',
+    ],
+    'rxvt' => [
+        '000000',
+        'CD0000',
+        '00CD00',
+        'CDCD00',
+        '0000CD',
+        'CD00CD',
+        '00CDCD',
+        'FAEBD7',
+
+        '404040',
+        'FF0000',
+        '00FF00',
+        'FFFF00',
+        '0000FF',
+        'FF00FF',
+        '00FFFF',
+        'FFFFFF',
+    ],
+    'sinclair' => [
+        '000000',
+        'CA0000',
+        '00CA00',
+        'CACA00',
+        '0000AA',
+        'CA00CA',
+        '00CACA',
+        'CACACA',
+
+        '555555',
+        'FF0000',
+        '00FF00',
+        'FFFF00',
+        '0000FF',
+        'FF00FF',
+        '00FFFF',
+        'FFFFFF',
+    ],
+    'tango-dark' => [
+        '000000',
+        'CC0000',
+        '4E9A06',
+        'C4A000',
+        '3465A4',
+        '75507B',
+        '06989A',
+        'AAAAAA',
+        
+        '555753',
+        'EF2929',
+        '8AE234',
+        'FCE94F',
+        '729FCF',
+        'AD7FA8',
+        '34E2E2',
+        'D3D7CF',
+    ],
+    'tango-light' => [
+        '2E3436',
+        'CC0000',
+        '4E9A06',
+        'C4A000',
+        '3465A4',
+        '75507B',
+        '06989A',
+        
+        'D3D7CF',
+        '555753',
+        'EF2929',
+        '8AE234',
+        'FCE94F',
+        '729FCF',
+        'AD7FA8',
+        '34E2E2',
+        'EEEEEC',
+    ],
+    'xterm' => [
+        '000000',
+        'CD0000',
+        '00CD00',
+        'CDCD00',
+        '1E90FF',
+        'CD00CD',
+        '00CDCD',
+        'E5E5E5',
+
+        '4C4C4C',
+        'FF0000',
+        '00FF00',
+        'FFFF00',
+        '4682B4',
+        'FF00FF',
+        '00FFFF',
+        'FFFFFF',
+    ],
+);
+
+GetOptions(
+    'l|list'    => \&list,
+    'r|reset'   => \my $reset,
+    's|show'    => \&show,
+    't|tty=i'   => \(my $tty = ''),
+) or pod2usage();
+
+open(my $handle, '>', "/dev/tty$tty") or die "Can't open tty: $!; aborted";
+
+if ($reset) {
+    syswrite $handle, "\033]R";
+    exit;
+}
+
+my $name = $ARGV[0];
+die 'No palette name specified; aborted' if !defined $name;
+die 'Unknown palette name; aborted' if !exists $palettes{$name};
+
+for my $num (0..$#{ $palettes{$name} }) {
+    my $escape = sprintf("\033]P%X%s", $num, $palettes{$name}[$num]);
+    syswrite $handle, $escape;
+}
+
+exit;
+
+sub list {
+    print "$_\n" for sort keys %palettes;
+    exit
+}
+
+# straight port of a bash script
+# will make it cleaner later
+sub show {
+    my $esc = "\033[";
+
+    for my $fg (0, 7, 1..6) {
+        my $no = '';
+        my $bo = '';
+        
+        for my $bg ('n', 7, 0, 1..6) {
+            my $co = "3$fg";
+            my $p = '  ';
+            
+            if ($bg !~ /n/) {
+                $co .= ";4$bg";
+                $p = '';
+            }
+
+            $no = sprintf('%s%s%sm   %s%s %s0m', $no, $esc, $co, $p, $co, $esc);
+            $bo = sprintf('%s%s1;%sm %s1;%s %s0m', $bo, $esc, $co, $p, $co, $esc);
+        }
+        
+        print "$no\n$bo\n";
+    }
+    exit;
+}
+
+__END__
+
+=head1 NAME
+
+conpalette - Redefine a Linux console's color palette
+
+=head1 SYNOPSIS
+
+B<conpalette> [options] [palette]
+
+ Options:
+   -h, --help              Display this help message
+   -l, --list              List the available palettes
+   -r, --reset             Reset the console palette
+   -s, --show              Show the current palette
+   -t N, --tty=N           Specify a different tty
+
+=head1 DESCRIPTION
+
+This little program redefines the color palette of your Linux console using
+the escape sequences documented in L<console_codes(4)>.
+
+=head1 EXAMPLES
+
+You might put this in your F<~/.bashrc>:
+
+ if [ "$TERM" = "linux" ]; then
+     conpalette tango-dark
+ fi
+
+=head1 AUTHOR
+
+Hinrik E<Ouml>rn SigurE<eth>sson, hinrik.sig@gmail.com
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2008 Hinrik E<Ouml>rn SigurE<eth>sson
+
+This program is free software, you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
