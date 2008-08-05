@@ -7,7 +7,7 @@ use warnings;
 use Getopt::Long qw(:config auto_help);
 use Pod::Usage;
 
-our $VERSION = '0.1.3';
+our $VERSION = '0.1.4';
 
 my %palettes = (
     'konsole' => [
@@ -133,7 +133,7 @@ GetOptions(
     't|tty=i'   => \(my $tty = ''),
 ) or pod2usage();
 
-open(my $handle, '>', "/dev/tty$tty") or die "Can't open tty: $!; aborted";
+open(my $handle, '>', "/dev/tty$tty") or die "Can't open tty: $!; aborted\n";
 
 if ($reset) {
     syswrite $handle, "\033]R";
@@ -141,8 +141,8 @@ if ($reset) {
 }
 
 my $name = $ARGV[0];
-die 'No palette name specified; aborted' if !defined $name;
-die 'Unknown palette name; aborted' if !exists $palettes{$name};
+die "No palette name specified; aborted\n" if !defined $name;
+die "Unknown palette name; aborted\n" if !exists $palettes{$name};
 
 for my $num (0..$#{ $palettes{$name} }) {
     my $escape = sprintf("\033]P%X%s", $num, $palettes{$name}[$num]);
@@ -152,33 +152,34 @@ for my $num (0..$#{ $palettes{$name} }) {
 exit;
 
 sub list {
-    print "$_\n" for sort keys %palettes;
-    exit
+    print $_, "\n" for sort keys %palettes;
+    exit;
 }
 
-# straight port of a bash script
-# will make it cleaner later
 sub show {
     my $esc = "\033[";
 
-    for my $fg (0, 7, 1..6) {
-        my $no = '';
-        my $bo = '';
+    for my $fg_color (0, 7, 1..6) {
+        my $normal = '';
+        my $bright = '';
+        my $dim    = '';
         
-        for my $bg ('n', 7, 0, 1..6) {
-            my $co = "3$fg";
-            my $p = '  ';
+        for my $bg_color (undef, 7, 0, 1..6) {
+            my $colors = "3$fg_color";
+            my $padding = '  ';
             
-            if ($bg !~ /n/) {
-                $co .= ";4$bg";
-                $p = '';
+            if (defined $bg_color) {
+                $colors .= ";4$bg_color";
+                $padding = '';
             }
 
-            $no = sprintf('%s%s%sm   %s%s %s0m', $no, $esc, $co, $p, $co, $esc);
-            $bo = sprintf('%s%s1;%sm %s1;%s %s0m', $bo, $esc, $co, $p, $co, $esc);
+            $normal = sprintf('%s%s%sm   %s%s %s0m',   $normal, $esc, $colors, $padding, $colors, $esc);
+            $bright = sprintf('%s%s1;%sm %s1;%s %s0m', $bright, $esc, $colors, $padding, $colors, $esc);
+            $dim    = sprintf('%s%s2;%sm %s2;%s %s0m', $dim,    $esc, $colors, $padding, $colors, $esc);
+            
         }
         
-        print "$no\n$bo\n";
+        print "$normal\n$bright\n$dim\n";
     }
     exit;
 }

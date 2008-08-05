@@ -4,10 +4,10 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME          => 'App::ConPalette',
     AUTHOR        => 'Hinrik Örn Sigurðsson <hinrik.sig@gmail.com>',
-    VERSION_FROM  => 'bin/conpalette',
+    VERSION_FROM  => 'script/conpalette',
     ABSTRACT      => "Redefine a Linux console's color palette",
     LICENSE       => 'perl',
-    EXE_FILES     => [ 'bin/conpalette' ],
+    EXE_FILES     => [ 'script/conpalette' ],
     PREREQ_PM     => {
         'Getopt::Long'  => '2.33',
         'Pod::Usage'    => '0',
