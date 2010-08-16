@@ -1,3 +1,6 @@
+{{$NEXT}}
+    - Use Dist::Zilla
+
 0.1.4  Tue Aug  5 09:50:03 GMT 2008
     - Use script/ instead of bin/
     - Also print dim colors with conpalette -s
