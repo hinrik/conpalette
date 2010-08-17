@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.1.5 Tue Aug 17 22:33:07 GMT 2010
     - Use Dist::Zilla
     - Make all warnings fatal
 
