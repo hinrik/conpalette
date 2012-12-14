@@ -1,4 +1,5 @@
 {{$NEXT}}
+    - Fix crash introduced by --changes feature
 
 0.1.6 Fri Dec 14 03:50:19 GMT 2012
     - Add zenburn and solarized themes

@@ -226,7 +226,7 @@ if ($reset) {
     syswrite $handle, "\033]R";
     exit;
 }
-elsif (@$changes) {
+elsif ($changes && @$changes) {
     for my $change (@$changes) {
         my ($num, $color) = $change =~ /^(\d\d?):([0-9A-F]{6})$/i;
         if (!defined $num || !defined $color) {
