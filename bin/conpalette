@@ -213,10 +213,11 @@ my %palettes = (
 );
 
 GetOptions(
-    'l|list'    => \&list,
-    'r|reset'   => \my $reset,
-    's|show'    => \&show,
-    't|tty=i'   => \(my $tty = ''),
+    'l|list'      => \&list,
+    'r|reset'     => \my $reset,
+    's|show'      => \&show,
+    't|tty=i'     => \(my $tty = ''),
+    'c|change=s@' => \(my $changes),
 ) or pod2usage();
 
 open(my $handle, '>', "/dev/tty$tty") or die "Can't open tty: $!; aborted\n";
@@ -225,14 +226,23 @@ if ($reset) {
     syswrite $handle, "\033]R";
     exit;
 }
+elsif (@$changes) {
+    for my $change (@$changes) {
+        my ($num, $color) = $change =~ /^(\d\d?):([0-9A-F]{6})$/i;
+        if (!defined $num || !defined $color) {
+            die "Malformed color change '$change'; aborted\n";
+        }
+        syswrite $handle, sprintf("\033]P%X%s", $num, $color);
+    }
+    exit;
+}
 
 my $name = $ARGV[0];
 die "No palette name specified; aborted\n" if !defined $name;
 die "Unknown palette name; aborted\n" if !exists $palettes{$name};
 
 for my $num (0..$#{ $palettes{$name} }) {
-    my $escape = sprintf("\033]P%X%s", $num, $palettes{$name}[$num]);
-    syswrite $handle, $escape;
+    syswrite $handle, sprintf("\033]P%X%s", $num, $palettes{$name}[$num]);
 }
 
 exit;
@@ -286,6 +296,7 @@ B<conpalette> [options] [palette]
    -r, --reset             Reset the console palette
    -s, --show              Show the current palette
    -t N, --tty=N           Specify a different tty
+   -c NUM:COLOR, --change  Change color(s) manually (e.g. -c 13:1E2320)
 
 =head1 DESCRIPTION
 
