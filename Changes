@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.1.6 Fri Dec 14 03:50:19 GMT 2012
     - Add zenburn and solarized themes
     - Add --change option to change individual colors
 
