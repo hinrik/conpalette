@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.1.7 Fri Dec 14 03:59:23 GMT 2012
     - Fix crash introduced by --changes feature
 
 0.1.6 Fri Dec 14 03:50:19 GMT 2012
