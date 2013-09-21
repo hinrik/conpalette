@@ -1,0 +1,34 @@
+NAME
+    conpalette - Redefine a Linux console's color palette
+
+SYNOPSIS
+    conpalette [options] [palette]
+
+     Options:
+       -h, --help              Display this help message
+       -l, --list              List the available palettes
+       -r, --reset             Reset the console palette
+       -s, --show              Show the current palette
+       -t N, --tty=N           Specify a different tty
+       -c NUM:COLOR, --change  Change color(s) manually (e.g. -c 13:1E2320)
+
+DESCRIPTION
+    This little program redefines the color palette of your Linux console
+    using the escape sequences documented in console_codes(4).
+
+EXAMPLES
+    You might put this in your ~/.bashrc:
+
+     if [ "$TERM" = "linux" ]; then
+         conpalette tango-dark
+     fi
+
+AUTHOR
+    Hinrik Örn Sigurðsson, hinrik.sig@gmail.com
+
+LICENSE AND COPYRIGHT
+    Copyright 2008 Hinrik Örn Sigurðsson
+
+    This program is free software, you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+

@@ -1,2 +1,0 @@
-ack v1.39 Copyright 1993,94 Ogasawara Hiroyuki (COR.)
-usage: ack [-{e|s|j|c[c]}] [-{a|A|o<file>}] [-zCntud] [-{E|S}] [<file>..]
