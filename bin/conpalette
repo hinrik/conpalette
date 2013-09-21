@@ -307,8 +307,10 @@ the escape sequences documented in L<console_codes(4)>.
 
 You might put this in your F<~/.bashrc>:
 
- if [ "$TERM" = "linux" ]; then
-     conpalette tango-dark
+ if [[ $TERM == "linux" ]]; then
+     if type conpalette >&/dev/null; then
+         conpalette tango-dark
+     fi  
  fi
 
 =head1 AUTHOR
